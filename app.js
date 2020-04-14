@@ -87,7 +87,7 @@ const questionsIntern = [
   }
 ];
 
-let managerInfo     = [];
+// let managerInfo     = [];
 let teamMembersInfo = [];
 
 
@@ -131,7 +131,8 @@ function startTeamGenerator() {
   inquirer.prompt(questionsManager).then( (responseManager) => {
     if (JSON.stringify(responseManager) !== JSON.stringify({})) {
       const manager = new Manager(responseManager.managerName, responseManager.managerID, responseManager.managerEmail, responseManager.managerOfficeNumber);
-      managerInfo.push({ name: responseManager.managerName, id: responseManager.managerID, email: responseManager.managerEmail, role: 'Manager', officeNumber: responseManager.managerOfficeNumber } );
+      // managerInfo.push({ name: responseManager.managerName, id: responseManager.managerID, email: responseManager.managerEmail, role: 'Manager', officeNumber: responseManager.managerOfficeNumber } );
+      teamMembersInfo.push(manager);
 
       // Start asking questions about Team Members..
       startTeamMembers();
@@ -176,7 +177,8 @@ function buildTeamMembers(numberMembers) {
           inquirer.prompt(questionsEngineer).then( (responseEngineer) => {
             const responseComplementary = ((JSON.stringify(responseEngineer) !== JSON.stringify({})) ? responseEngineer.engineerGithub : "Not Defined");
             const engineer              = new Engineer(responseMembers.memberName, responseMembers.memberID, responseMembers.memberEmail, responseComplementary);
-            teamMembersInfo.push({ name: responseMembers.memberName, id: responseMembers.memberID, email: responseMembers.memberEmail, role: responseMembers.memberRole, github: responseComplementary } );
+            //teamMembersInfo.push({ name: responseMembers.memberName, id: responseMembers.memberID, email: responseMembers.memberEmail, role: responseMembers.memberRole, github: responseComplementary } );
+            teamMembersInfo.push(engineer);
             buildTeamMembers(--nMembers);
           });
         }
@@ -185,7 +187,8 @@ function buildTeamMembers(numberMembers) {
           inquirer.prompt(questionsIntern).then( (responseIntern) => {
             const responseComplementary = ((JSON.stringify(responseIntern) !== JSON.stringify({})) ? responseIntern.internSchool : "Not Defined");
             const intern                = new Intern(responseMembers.memberName, responseMembers.memberID, responseMembers.memberEmail, responseComplementary);
-            teamMembersInfo.push({ name: responseMembers.memberName, id: responseMembers.memberID, email: responseMembers.memberEmail, role: responseMembers.memberRole, school: responseComplementary } );
+            // teamMembersInfo.push({ name: responseMembers.memberName, id: responseMembers.memberID, email: responseMembers.memberEmail, role: responseMembers.memberRole, school: responseComplementary } );
+            teamMembersInfo.push(intern);
             buildTeamMembers(--nMembers);
           });
         }
@@ -230,13 +233,14 @@ function verifyTeamComplete() {
 
 function buildHTML() {
   // Build webpage with ALL Team Members (Manager, Engineer, and Intern)
-  const allTeamMembers = [];
-  allTeamMembers.push(managerInfo, teamMembersInfo);
+  //const allTeamMembers = [];
+  //allTeamMembers.push(managerInfo, teamMembersInfo);
 
+  console.log("teamMembersInfo = " + JSON.stringify(teamMembersInfo));
   // console.log("All Members = " + JSON.stringify(allTeamMembers));
 
   createDirectory(OUTPUT_DIR);// In case Folder does NOT exists
-  writeToFile(render(allTeamMembers), outputPath);
+  writeToFile(render(teamMembersInfo), outputPath);
 }
 
 const createDirectory = (dirPath) => {
@@ -250,15 +254,16 @@ const createDirectory = (dirPath) => {
 
 function writeToFile(data, ...fileName) {
   for (let index = 0; index < fileName.length; index++) {
-    console.log(`Creating "${fileName[index]}" file...`)
+    console.log(`Creating "HTML" file...`)
+    console.log("DATA = " + data[index]);
 
     // fs.writeFileSync(path.join(process.cwd(), fileName[index]), data[index], function(err){
     fs.writeFileSync(fileName[index], data[index], function(err){
       if (err) {
-        console.log(`ERROR: "${fileName[index]}" file was not create due to ${err}.`);
+        console.log(`ERROR: "HTML" file was not create due to ${err}.`);
       }
     });
-    console.log(`"${fileName[index]}" file successfully created!`); 
+    console.log(`"HTML" file successfully created!`); 
   }
 }
 
